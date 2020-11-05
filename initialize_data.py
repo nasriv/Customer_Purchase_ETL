@@ -7,6 +7,7 @@ import random
 import json
 from faker.providers import BaseProvider
 from datetime import datetime
+import pandas as pd
 
 # ---- function defintions -------
 
@@ -14,11 +15,20 @@ from datetime import datetime
 def create_json_file(filename: str, dict):
     '''function used to dump json file from dictionary'''
     with open(str(filename) + '.json', 'w') as file:
-        json.dump(dict, file)
+        json.dump(dict,
+                  file)
+
+
+def create_csv_file(filename: str, df):
+    '''convert pandas df to csv file'''
+    pd.to_csv(str(filename) + '.csv',
+              df,
+              sep=',',
+              index=False)
 
 
 class ProductProvider(BaseProvider):
-    '''create new faker class to generate product types'''
+    '''create new faker provdider through class inheritance to generate fake product types'''
 
     def product(self):
         products = (
@@ -32,7 +42,7 @@ class ProductProvider(BaseProvider):
 fake = Faker('en_US')
 
 # create customer database values
-num_customer = 3
+num_customer = 10000
 customer_dict = {}
 
 for customer in range(num_customer):
@@ -63,6 +73,7 @@ order_dict = {}
 
 for customer in range(num_customer):
     for i in range(random.randint(1, 4)):
+        # define random number of items a customer purchases
         order_dict.update({fake.ean(length=8, prefixes=('000')): {'CustID': customer_dict[customer]['CustID'],
                                                                   'product': fake.product(),
                                                                   'item_cost': round(random.uniform(0, 100), 2),
@@ -72,6 +83,18 @@ for customer in range(num_customer):
                           )
 
 
-# save dictionaries to json file for later import to database
+# create  Iphone user event database
+columns = ('EventID CustID ToApp AppOpenTime').split(' ')
+event_df = pd.DataFrame(columns=columns, index=None)
+num_events = 50000
+
+for event in range(num_events):
+    customer_val = random.randint(0, num_customer - 1)
+    temp = [[event, customer_dict[customer_val]['CustID'], round(random.uniform(0, 3600), 2), str(
+        fake.date_time_between(start_date='-1y', end_date='now'))]]
+    event_df = event_df.append(pd.DataFrame(temp, columns=columns), ignore_index=False)
+
+# save dictionaries to file for later import to database
 create_json_file('data/customer_db', customer_dict)
 create_json_file('data/order_db', order_dict)
+create_csv_file('data/event_db',event_df)
