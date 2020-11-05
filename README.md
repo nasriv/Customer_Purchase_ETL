@@ -1,7 +1,7 @@
 # Customer_Purchase_ETL
 
 ### Introduction
-This project setups up a 
+This project utilizes a user generated raw data source of customer information, order history and iphone website history. The event data will be used to structure a data pipeline in order to feed an analytics dashboard and assist in future corporate strategy decisions. 
 
 ### Pipeline Structure
 
