@@ -48,7 +48,7 @@ for entry in range(num_entry):
                       }
                      )
     if entry == (num_entry-1):
-        create_json_file('customer_db',customers)
+        create_json_file('data/customer_db',customers)
 
 # create product order database
 
